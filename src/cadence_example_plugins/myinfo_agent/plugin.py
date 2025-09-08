@@ -7,7 +7,7 @@ class MyInfoPlugin(BasePlugin):
         """Return plugin metadata."""
         return PluginMetadata(
             name="myinfo",
-            version="1.0.12",
+            version="1.1.0",
             description="Chatbot - self introduction, information",
             agent_type="specialized",
             capabilities=["my_info"],

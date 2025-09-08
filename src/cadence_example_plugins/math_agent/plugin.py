@@ -11,7 +11,7 @@ class MathPlugin(BasePlugin):
         """Return plugin metadata."""
         return PluginMetadata(
             name="mathematics",
-            version="1.0.12",
+            version="1.1.0",
             description="Mathematical calculations and arithmetic operations agent",
             agent_type="specialized",
             capabilities=["addition", "subtraction", "multiplication", "division", "power", "modulo"],

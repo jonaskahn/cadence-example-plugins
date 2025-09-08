@@ -42,11 +42,11 @@ class SearchPlugin(BasePlugin):
         """Return plugin metadata."""
         return PluginMetadata(
             name="internet_browser",
-            version="1.0.12",
+            version="1.1.0",
             description="Internet Browser Search agent, using DuckDuckGo API",
             agent_type="specialized",
             response_schema=SearchResponseSchema,
-            response_suggestion="When presenting search results, always include source citations with clickable links, organize information by relevance and recency, provide context about the credibility of sources, and offer follow-up search suggestions when appropriate. Use clear headings and bullet points for better readability.",
+            response_suggestion="When presenting search results, use clear headings and bullet points for better readability. Search response must include title, image (thumbnail if has any), link to article",
             capabilities=[
                 "web_search",
                 "news_search",

@@ -20,7 +20,7 @@ class MyInfoAgent(BaseAgent):
             "bot_description": os.environ.get("CADENCE_BOT_DESCRIPTION", "Multiple Agents Chatbot System"),
             "bot_creator": os.environ.get("CADENCE_BOT_CREATOR", "JonasKahn"),
             "bot_specialization": os.environ.get("CADENCE_BOT_SPECIALIZATION", "Business"),
-            "bot_version": os.environ.get("CADENCE_BOT_VERSION", "1.0.12"),
+            "bot_version": os.environ.get("CADENCE_BOT_VERSION", "1.1.0"),
         }
 
     def get_tools(self) -> List[Tool]:
