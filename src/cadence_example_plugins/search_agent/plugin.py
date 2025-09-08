@@ -42,11 +42,11 @@ class SearchPlugin(BasePlugin):
         """Return plugin metadata."""
         return PluginMetadata(
             name="internet_browser",
-            version="1.0.12",
+            version="1.1.0",
             description="Internet Browser Search agent, using DuckDuckGo API",
             agent_type="specialized",
             response_schema=SearchResponseSchema,
-            response_suggestion="When presenting search results, always include source citations with clickable links, organize information by relevance and recency, provide context about the credibility of sources, and offer follow-up search suggestions when appropriate. Use clear headings and bullet points for better readability.",
+            response_suggestion="When presenting search results, use clear headings and bullet points for better readability. Search response must include title, image (thumbnail if has any), link to article",
             capabilities=[
                 "web_search",
                 "news_search",
@@ -59,7 +59,7 @@ class SearchPlugin(BasePlugin):
                 "max_tokens": 1024,
             },
             dependencies=[
-                "cadence-sdk>=1.0.7,<2.0.0",
+                "cadence-sdk>=1.1.0,<2.0.0",
                 "ddgs>=9.5.4,<10.0.0",
             ],
         )

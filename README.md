@@ -112,7 +112,7 @@ class ExamplePlugin(BasePlugin):
     def get_metadata() -> PluginMetadata:
         return PluginMetadata(
             name="example_plugin",
-            version="1.0.12",
+            version="1.1.0",
             description="An example plugin for demonstration",
             capabilities=["example"],
             llm_requirements={
@@ -232,7 +232,7 @@ The Cadence framework automatically discovers plugins from:
        def get_metadata() -> PluginMetadata:
            return PluginMetadata(
                name="my_plugin",
-               version="1.0.12",
+               version="1.1.0",
                description="My custom plugin",
                capabilities=["custom"],
                llm_requirements={
@@ -354,7 +354,7 @@ class WeatherPlugin(BasePlugin):
     def get_metadata() -> PluginMetadata:
         return PluginMetadata(
             name="weather_plugin",
-            version="1.0.12",
+            version="1.1.0",
             description="Weather information and forecasting",
             capabilities=["weather_forecast", "current_conditions"],
             llm_requirements={

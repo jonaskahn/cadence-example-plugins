@@ -11,7 +11,7 @@ class MathPlugin(BasePlugin):
         """Return plugin metadata."""
         return PluginMetadata(
             name="mathematics",
-            version="1.0.12",
+            version="1.1.0",
             description="Mathematical calculations and arithmetic operations agent",
             agent_type="specialized",
             capabilities=["addition", "subtraction", "multiplication", "division", "power", "modulo"],
@@ -22,7 +22,7 @@ class MathPlugin(BasePlugin):
                 "temperature": 0.2,
                 "max_tokens": 1024,
             },
-            dependencies=["cadence-sdk>=1.0.7,<2.0.0"],
+            dependencies=["cadence-sdk>=1.1.0,<2.0.0"],
         )
 
     @staticmethod
