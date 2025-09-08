@@ -112,7 +112,7 @@ class ExamplePlugin(BasePlugin):
     def get_metadata() -> PluginMetadata:
         return PluginMetadata(
             name="example_plugin",
-            version="1.1.0",
+            version="1.2.0",
             description="An example plugin for demonstration",
             capabilities=["example"],
             llm_requirements={
@@ -147,8 +147,8 @@ class ExampleAgent(BaseAgent):
         return "You are an example agent for demonstration purposes."
 
 
-# tools.py
-from cadence_sdk.tools import Tool
+# tool.py
+from cadence_sdk.decorators import Tool
 
 
 class ExampleTool(Tool):
@@ -217,7 +217,7 @@ The Cadence framework automatically discovers plugins from:
    ```bash
    mkdir my_plugin
    cd my_plugin
-   touch __init__.py agent.py tools.py plugin.py
+   touch __init__.py agent.py tool.py plugin.py
    ```
 
 2. **Implement plugin interface**
@@ -232,7 +232,7 @@ The Cadence framework automatically discovers plugins from:
        def get_metadata() -> PluginMetadata:
            return PluginMetadata(
                name="my_plugin",
-               version="1.1.0",
+               version="1.2.0",
                description="My custom plugin",
                capabilities=["custom"],
                llm_requirements={
@@ -272,8 +272,8 @@ The Cadence framework automatically discovers plugins from:
 4. **Add tools (optional)**
 
    ```python
-   # tools.py
-   from cadence_sdk.tools import Tool
+   # tool.py
+   from cadence_sdk.decorators import Tool
    
    class MyTool(Tool):
        name = "my_tool"
@@ -345,7 +345,7 @@ else:
 ```python
 from cadence_sdk.base.plugin import BasePlugin
 from cadence_sdk.base.agent import BaseAgent
-from cadence_sdk.tools import Tool
+from cadence_sdk.decorators import Tool
 from cadence_sdk.base.metadata import PluginMetadata
 
 
@@ -354,7 +354,7 @@ class WeatherPlugin(BasePlugin):
     def get_metadata() -> PluginMetadata:
         return PluginMetadata(
             name="weather_plugin",
-            version="1.1.0",
+            version="1.2.0",
             description="Weather information and forecasting",
             capabilities=["weather_forecast", "current_conditions"],
             llm_requirements={

@@ -1,11 +1,13 @@
 """Search Agent Plugin using Cadence SDK."""
 
-from typing import Optional
+from typing import Optional, TypedDict
 
 from cadence_sdk import BaseAgent, BasePlugin, PluginMetadata
-from typing_extensions import Annotated, TypedDict
+from cadence_sdk.decorators import list_schema
+from typing_extensions import Annotated
 
 
+@list_schema
 class SearchResponseSchema(TypedDict):
     """Unified schema for representing heterogeneous search response entities"""
 
@@ -41,12 +43,12 @@ class SearchPlugin(BasePlugin):
     def get_metadata() -> PluginMetadata:
         """Return plugin metadata."""
         return PluginMetadata(
-            name="internet_browser",
-            version="1.1.0",
+            name="browse_internet",
+            version="1.2.0",
             description="Internet Browser Search agent, using DuckDuckGo API",
             agent_type="specialized",
             response_schema=SearchResponseSchema,
-            response_suggestion="When presenting search results, use clear headings and bullet points for better readability. Search response must include title, image (thumbnail if has any), link to article",
+            response_suggestion="When presenting search results, use clear headings and bullet points for better readability. Search response must include title, image (thumbnail if has any), link to article, maybe the approximated time",
             capabilities=[
                 "web_search",
                 "news_search",
@@ -59,7 +61,7 @@ class SearchPlugin(BasePlugin):
                 "max_tokens": 1024,
             },
             dependencies=[
-                "cadence-sdk>=1.1.0,<2.0.0",
+                "cadence-sdk>=1.2.0,<2.0.0",
                 "ddgs>=9.5.4,<10.0.0",
             ],
         )
