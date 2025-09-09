@@ -7,7 +7,7 @@ class MyInfoPlugin(BasePlugin):
         """Return plugin metadata."""
         return PluginMetadata(
             name="myinfo",
-            version="1.3.0",
+            version="1.3.1",
             description="Chatbot - self introduction, information",
             agent_type="specialized",
             capabilities=["my_info"],
@@ -17,7 +17,7 @@ class MyInfoPlugin(BasePlugin):
                 "temperature": 0.1,
                 "max_tokens": 1024,
             },
-            dependencies=["cadence-sdk>=1.3.0,<2.0.0"],
+            dependencies=["cadence-sdk>=1.3.1,<2.0.0"],
         )
 
     @staticmethod

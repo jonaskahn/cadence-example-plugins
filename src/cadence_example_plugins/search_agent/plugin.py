@@ -44,7 +44,7 @@ class SearchPlugin(BasePlugin):
         """Return plugin metadata."""
         return PluginMetadata(
             name="browse_internet",
-            version="1.3.0",
+            version="1.3.1",
             description="Internet Browser Search agent, using DuckDuckGo API",
             agent_type="specialized",
             response_schema=SearchResponseSchema,
@@ -61,7 +61,7 @@ class SearchPlugin(BasePlugin):
                 "max_tokens": 1024,
             },
             dependencies=[
-                "cadence-sdk>=1.3.0,<2.0.0",
+                "cadence-sdk>=1.3.1,<2.0.0",
                 "ddgs>=9.5.4,<10.0.0",
             ],
         )

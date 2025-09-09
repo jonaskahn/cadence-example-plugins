@@ -1,71 +1,88 @@
 # Cadence Example Plugins
 
-A collection of example AI agent plugins for the Cadence Framework.
+A collection of example AI agent plugins for the Cadence Framework, built using the Cadence SDK.
 
 ## Overview
 
 This repository contains example plugins that demonstrate how to build custom AI agents and tools for the Cadence
-multi-agent framework. These plugins showcase various capabilities and serve as templates for building your own plugins.
+multi-agent framework using the Cadence SDK. These plugins showcase various capabilities including mathematical
+operations,
+web search, and general information handling, serving as templates for building your own plugins.
 
 ## Available Plugins
 
-### Math Agent
+### Math Agent (`mathematics`)
 
-A specialized agent for mathematical calculations and problem-solving.
+A specialized agent for mathematical calculations and problem-solving using the Cadence SDK.
 
 **Features:**
 
-- Basic arithmetic operations
-- Complex mathematical expressions
-- Unit conversions
-- Mathematical problem solving
+- Basic arithmetic operations (addition, subtraction, multiplication, division)
+- Advanced operations (exponentiation, modulo)
+- Error handling for edge cases (division by zero, overflow)
+- Structured response schemas with operation tracking
+- Step-by-step calculation explanations
+
+**Capabilities:**
+
+- `addition`, `subtraction`, `multiplication`, `division`, `power`, `modulo`
 
 **Usage:**
 
 ```python
-from cadence_plugins.math_agent.plugin import MathPlugin
+from cadence_example_plugins.math_agent.plugin import MathPlugin
 
 plugin = MathPlugin()
 agent = plugin.create_agent()
 # The agent is used by the Cadence framework automatically
 ```
 
-### Search Agent
+### Search Agent (`browse_internet`)
 
-A web search agent for information retrieval and research.
+A web search agent for information retrieval and research using DuckDuckGo API.
 
 **Features:**
 
-- Web search capabilities
-- Information summarization
-- Source citation
-- Multi-query support
+- Web search capabilities with DuckDuckGo integration
+- News search for current events
+- Image search for visual content
+- Structured response schemas with title, description, and links
+- Source citation and thumbnail support
+- Multi-query support with intelligent search selection
+
+**Capabilities:**
+
+- `web_search`, `news_search`, `image_search`
 
 **Usage:**
 
 ```python
-from cadence_plugins.search_agent.plugin import SearchPlugin
+from cadence_example_plugins.search_agent.plugin import SearchPlugin
 
 plugin = SearchPlugin()
 agent = plugin.create_agent()
 # The agent is used by the Cadence framework automatically
 ```
 
-### Info Agent
+### Info Agent (`myinfo`)
 
-A general-purpose information and utility agent.
+A general-purpose information and utility agent for chatbot self-introduction and information handling.
 
 **Features:**
 
-- General knowledge queries
-- Utility functions
-- Information organization
+- General knowledge queries and information handling
+- Self-introduction capabilities
 - Context-aware responses
+- Simple utility functions
+
+**Capabilities:**
+
+- `my_info`
 
 **Usage:**
 
 ```python
-from cadence_plugins.myinfo_agent.plugin import MyInfoPlugin
+from cadence_example_plugins.myinfo_agent.plugin import MyInfoPlugin
 
 plugin = MyInfoPlugin()
 agent = plugin.create_agent()
@@ -74,20 +91,12 @@ agent = plugin.create_agent()
 
 ## Plugin Structure
 
-Each plugin follows a standard structure and must be properly registered to be discovered by the Cadence framework.
+Each plugin follows a standard structure using the Cadence SDK and is automatically discovered by the framework.
 
-### Plugin Registration
+### Plugin Discovery
 
-Every plugin must register itself in its `__init__.py` file:
-
-```python
-# plugins/src/cadence_example_plugins/my_plugin/__init__.py
-from cadence_sdk import register_plugin
-from .plugin import MyPlugin
-
-# Register on import
-register_plugin(MyPlugin)
-```
+Plugins are automatically discovered by the Cadence framework through the SDK's plugin discovery system. No manual
+registration is required - the framework scans for plugins that inherit from `BasePlugin`.
 
 ### Directory Structure
 
@@ -103,8 +112,15 @@ plugin_name/
 
 ```python
 # plugin.py
-from cadence_sdk.base.plugin import BasePlugin
-from cadence_sdk.base.metadata import PluginMetadata
+from cadence_sdk import BasePlugin, PluginMetadata
+from cadence_sdk.decorators import object_schema
+from typing import TypedDict, Annotated
+
+
+@object_schema
+class ExampleResponseSchema(TypedDict):
+    """Schema for plugin response structure."""
+    result: Annotated[str, "The result of the operation"]
 
 
 class ExamplePlugin(BasePlugin):
@@ -112,16 +128,19 @@ class ExamplePlugin(BasePlugin):
     def get_metadata() -> PluginMetadata:
         return PluginMetadata(
             name="example_plugin",
-            version="1.3.0",
+            version="1.3.1",
             description="An example plugin for demonstration",
             capabilities=["example"],
+            agent_type="specialized",
+            response_schema=ExampleResponseSchema,
+            response_suggestion="When presenting results, be clear and concise.",
             llm_requirements={
                 "provider": "openai",
-                "model": "gpt-4",
-                "temperature": 0.1
+                "model": "gpt-4.1",
+                "temperature": 0.1,
+                "max_tokens": 1024,
             },
-            agent_type="specialized",
-            dependencies=[]
+            dependencies=["cadence-sdk>=1.3.1,<2.0.0"]
         )
 
     @staticmethod
@@ -129,9 +148,25 @@ class ExamplePlugin(BasePlugin):
         from .agent import ExampleAgent
         return ExampleAgent(ExamplePlugin.get_metadata())
 
+    @staticmethod
+    def health_check() -> dict:
+        """Perform health check for the plugin."""
+        try:
+            return {
+                "healthy": True,
+                "details": "Example plugin is operational",
+                "checks": {"basic_functionality": "OK"}
+            }
+        except Exception as e:
+            return {
+                "healthy": False,
+                "details": f"Example plugin health check failed: {e}",
+                "error": str(e)
+            }
+
 
 # agent.py
-from cadence_sdk.base.agent import BaseAgent
+from cadence_sdk import BaseAgent
 from cadence_sdk.base.metadata import PluginMetadata
 
 
@@ -140,23 +175,31 @@ class ExampleAgent(BaseAgent):
         super().__init__(metadata)
 
     def get_tools(self):
-        from .tools import ExampleTool
-        return [ExampleTool()]
+        from .tools import example_tools
+        return example_tools
 
     def get_system_prompt(self) -> str:
         return "You are an example agent for demonstration purposes."
 
 
-# tool.py
-from cadence_sdk.decorators import Tool
+# tools.py
+from cadence_sdk import tool
 
 
-class ExampleTool(Tool):
-    name = "example_tool"
-    description = "An example tool"
+@tool
+def example_tool(input_data: str) -> str:
+    """An example tool for demonstration.
 
-    def execute(self, **kwargs) -> str:
-        return "Tool executed successfully"
+    Args:
+        input_data: Input data to process
+
+    Returns:
+        Processed result
+    """
+    return f"Processed: {input_data}"
+
+
+example_tools = [example_tool]
 ```
 
 ## Installation
@@ -179,7 +222,7 @@ poetry install --editable
 ### From PyPI
 
 ```bash
-pip install cadence-plugins
+pip install cadence-example-plugins
 # Note: This package is part of the main Cadence repository
 ```
 
@@ -189,14 +232,16 @@ pip install cadence-plugins
 
 ```bash
 # Set plugin directories (single path or JSON list)
-export CADENCE_PLUGINS_DIR="./plugins/src/cadence_plugins"
+export CADENCE_PLUGINS_DIR="./plugins/src/cadence_example_plugins"
 
 # Or multiple directories as JSON array
 export CADENCE_PLUGINS_DIR='["/path/to/plugins", "/another/path"]'
 
+# Enable directory-based plugin discovery
+export CADENCE_ENABLE_DIRECTORY_PLUGINS=true
+
 # Plugin limits (configured in main application)
 export CADENCE_MAX_AGENT_HOPS=25
-
 export CADENCE_GRAPH_RECURSION_LIMIT=50
 ```
 
@@ -204,9 +249,9 @@ export CADENCE_GRAPH_RECURSION_LIMIT=50
 
 The Cadence framework automatically discovers plugins from:
 
-- Installed packages (via pip)
-- Directory paths (configured via environment variables)
-- Custom plugin registries
+- Installed packages (via pip) - automatically scanned
+- Directory paths (configured via `CADENCE_PLUGINS_DIR`) - when `CADENCE_ENABLE_DIRECTORY_PLUGINS=true`
+- SDK-based plugin discovery system
 
 ## Development
 
@@ -224,47 +269,55 @@ The Cadence framework automatically discovers plugins from:
 
    ```python
    # plugin.py
-   from cadence_sdk.base.plugin import BasePlugin
-   from cadence_sdk.base.metadata import PluginMetadata
-   
+   from cadence_sdk import BasePlugin, PluginMetadata
+
    class MyPlugin(BasePlugin):
        @staticmethod
        def get_metadata() -> PluginMetadata:
            return PluginMetadata(
                name="my_plugin",
-               version="1.3.0",
+               version="1.3.1",
                description="My custom plugin",
                capabilities=["custom"],
+               agent_type="specialized",
                llm_requirements={
                    "provider": "openai",
-                   "model": "gpt-4",
-                   "temperature": 0.1
+                   "model": "gpt-4.1",
+                   "temperature": 0.1,
+                   "max_tokens": 1024,
                },
-               agent_type="specialized",
-               dependencies=[]
+               dependencies=["cadence-sdk>=1.3.1,<2.0.0"]
            )
-       
+
        @staticmethod
        def create_agent():
            from .agent import MyAgent
            return MyAgent(MyPlugin.get_metadata())
+
+       @staticmethod
+       def health_check() -> dict:
+           """Perform health check for the plugin."""
+           return {
+               "healthy": True,
+               "details": "My plugin is operational"
+           }
    ```
 
 3. **Implement agent**
 
    ```python
    # agent.py
-   from cadence_sdk.base.agent import BaseAgent
+   from cadence_sdk import BaseAgent
    from cadence_sdk.base.metadata import PluginMetadata
-   
+
    class MyAgent(BaseAgent):
        def __init__(self, metadata: PluginMetadata):
            super().__init__(metadata)
-       
+
        def get_tools(self):
-           from .tools import MyTool
-           return [MyTool()]
-       
+           from .tools import my_tools
+           return my_tools
+
        def get_system_prompt(self) -> str:
            return "You are a custom agent. How can I help you?"
    ```
@@ -272,16 +325,23 @@ The Cadence framework automatically discovers plugins from:
 4. **Add tools (optional)**
 
    ```python
-   # tool.py
-   from cadence_sdk.decorators import Tool
-   
-   class MyTool(Tool):
-       name = "my_tool"
-       description = "My custom tool"
-       
-       def execute(self, **kwargs) -> str:
-           # Your tool logic here
-           return "Tool executed"
+   # tools.py
+   from cadence_sdk import tool
+
+   @tool
+   def my_tool(input_data: str) -> str:
+       """My custom tool for processing data.
+
+       Args:
+           input_data: Input data to process
+
+       Returns:
+           Processed result
+       """
+       # Your tool logic here
+       return f"Processed: {input_data}"
+
+   my_tools = [my_tool]
    ```
 
 ### Testing Your Plugin
@@ -292,11 +352,13 @@ poetry run pytest tests/
 
 # Test with Cadence framework
 export CADENCE_PLUGINS_DIR="./my_plugin"
+export CADENCE_ENABLE_DIRECTORY_PLUGINS=true
 python -m cadence
 
 # Or test from main project directory
 cd ..  # Go back to main project
-export CADENCE_PLUGINS_DIR="./plugins/src/cadence_plugins"
+export CADENCE_PLUGINS_DIR="./plugins/src/cadence_example_plugins"
+export CADENCE_ENABLE_DIRECTORY_PLUGINS=true
 python -m cadence
 ```
 
@@ -312,6 +374,10 @@ if errors:
     print("Validation errors:", errors)
 else:
     print("Plugin is valid!")
+
+# Health check
+health_status = MyPlugin.health_check()
+print(f"Plugin health: {health_status}")
 ```
 
 ## Best Practices
@@ -343,10 +409,17 @@ else:
 ### Advanced Plugin Example
 
 ```python
-from cadence_sdk.base.plugin import BasePlugin
-from cadence_sdk.base.agent import BaseAgent
-from cadence_sdk.decorators import Tool
-from cadence_sdk.base.metadata import PluginMetadata
+from cadence_sdk import BasePlugin, BaseAgent, PluginMetadata, tool
+from cadence_sdk.decorators import object_schema
+from typing import TypedDict, Annotated
+
+
+@object_schema
+class WeatherResponseSchema(TypedDict):
+    """Schema for weather response."""
+    location: Annotated[str, "The location for weather data"]
+    temperature: Annotated[str, "Current temperature"]
+    condition: Annotated[str, "Weather condition"]
 
 
 class WeatherPlugin(BasePlugin):
@@ -354,16 +427,19 @@ class WeatherPlugin(BasePlugin):
     def get_metadata() -> PluginMetadata:
         return PluginMetadata(
             name="weather_plugin",
-            version="1.3.0",
+            version="1.3.1",
             description="Weather information and forecasting",
             capabilities=["weather_forecast", "current_conditions"],
+            agent_type="specialized",
+            response_schema=WeatherResponseSchema,
+            response_suggestion="Present weather information clearly with location and conditions.",
             llm_requirements={
                 "provider": "openai",
-                "model": "gpt-4",
-                "temperature": 0.1
+                "model": "gpt-4.1",
+                "temperature": 0.1,
+                "max_tokens": 1024,
             },
-            agent_type="specialized",
-            dependencies=["requests", "pandas"]
+            dependencies=["cadence-sdk>=1.3.1,<2.0.0", "requests"]
         )
 
     @staticmethod
@@ -371,26 +447,50 @@ class WeatherPlugin(BasePlugin):
         from .agent import WeatherAgent
         return WeatherAgent(WeatherPlugin.get_metadata())
 
+    @staticmethod
+    def health_check() -> dict:
+        """Perform health check for the weather plugin."""
+        try:
+            return {
+                "healthy": True,
+                "details": "Weather plugin is operational",
+                "checks": {"api_connectivity": "OK"}
+            }
+        except Exception as e:
+            return {
+                "healthy": False,
+                "details": f"Weather plugin health check failed: {e}",
+                "error": str(e)
+            }
+
 
 class WeatherAgent(BaseAgent):
     def __init__(self, metadata: PluginMetadata):
         super().__init__(metadata)
 
     def get_tools(self):
-        from .tools import WeatherTool
-        return [WeatherTool()]
+        from .tools import weather_tools
+        return weather_tools
 
     def get_system_prompt(self) -> str:
         return "You are a weather agent that provides weather information and forecasts."
 
 
-class WeatherTool(Tool):
-    name = "get_weather"
-    description = "Get current weather for a location"
+@tool
+def get_weather(location: str) -> str:
+    """Get current weather for a location.
 
-    def execute(self, location: str) -> str:
-        # Implementation would call weather API
-        return f"Weather for {location}: Sunny, 72°F"
+    Args:
+        location: The location to get weather for
+
+    Returns:
+        Weather information for the location
+    """
+    # Implementation would call weather API
+    return f"Weather for {location}: Sunny, 72°F"
+
+
+weather_tools = [get_weather]
 ```
 
 ## Contributing
@@ -418,11 +518,13 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ### Common Issues
 
 1. **Plugin not discovered**
+
     - Check plugin directory path
     - Verify plugin structure
     - Check environment variables
 
 2. **Import errors**
+
     - Verify dependencies are installed
     - Check import paths
     - Ensure plugin is properly structured
@@ -434,9 +536,9 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ### Getting Help
 
-- Check the [documentation](https://cadence-plugins.readthedocs.io/)
-- Open an [issue](https://github.com/jonaskahn/cadence-plugins/issues)
-- Join our [discussions](https://github.com/jonaskahn/cadence-plugins/discussions)
+- Check the [documentation](https://cadence.readthedocs.io/)
+- Open an [issue](https://github.com/jonaskahn/cadence/issues)
+- Join our [discussions](https://github.com/jonaskahn/cadence/discussions)
 
 ## License
 
