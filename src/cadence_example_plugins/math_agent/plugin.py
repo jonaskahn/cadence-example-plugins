@@ -25,7 +25,7 @@ class MathPlugin(BasePlugin):
         """Return plugin metadata."""
         return PluginMetadata(
             name="mathematics",
-            version="1.2.0",
+            version="1.3.0",
             description="Mathematical calculations and arithmetic operations agent",
             agent_type="specialized",
             response_schema=MatchResponseSchema,
@@ -37,7 +37,7 @@ class MathPlugin(BasePlugin):
                 "temperature": 0.2,
                 "max_tokens": 1024,
             },
-            dependencies=["cadence-sdk>=1.2.0,<2.0.0"],
+            dependencies=["cadence-sdk>=1.3.0,<2.0.0"],
         )
 
     @staticmethod
